@@ -1,0 +1,212 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>💌</title>
+
+  <style>
+    body{
+      margin:0;
+      font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,Arial;
+      min-height:100vh;
+      display:flex;
+      align-items:center;
+      justify-content:center;
+      padding:24px;
+
+      /* Cute pink background (Option A) */
+      background:
+        radial-gradient(circle at 20% 20%, rgba(255,255,255,0.75) 0 6px, transparent 7px),
+        radial-gradient(circle at 80% 30%, rgba(255,255,255,0.55) 0 5px, transparent 6px),
+        radial-gradient(circle at 30% 80%, rgba(255,255,255,0.55) 0 5px, transparent 6px),
+        linear-gradient(135deg, #ffd1e8, #fff1f8);
+      background-size: 180px 180px, 220px 220px, 200px 200px, cover;
+      background-repeat: repeat, repeat, repeat, no-repeat;
+    }
+
+    .card{
+      width:min(520px, 100%);
+      background: rgba(255,255,255,.78);
+
+      /* Bonus: pink glow */
+      border: 1px solid rgba(255, 77, 109, 0.18);
+      box-shadow: 0 24px 70px rgba(255, 77, 109, 0.18);
+
+      border-radius:24px;
+      padding:34px 28px;
+      text-align:center;
+      backdrop-filter: blur(10px);
+      position: relative;
+      overflow: hidden;
+      min-height: 240px;
+    }
+
+    h1{
+      margin: 0;
+      font-size: 30px;
+      letter-spacing: -0.02em;
+      line-height: 1.25;
+    }
+
+    .subtitle{
+      margin-top:12px;
+      font-size:15px;
+      opacity:.75;
+      line-height: 1.5;
+    }
+
+    .btns{
+      display:flex;
+      gap:12px;
+      justify-content:center;
+      margin-top:22px;
+      flex-wrap:wrap;
+      position: relative;
+      min-height: 70px;
+    }
+
+    button{
+      border:0;
+      border-radius:999px;
+      padding:12px 18px;
+      font-size:16px;
+      cursor:pointer;
+      box-shadow: 0 10px 25px rgba(0,0,0,.08);
+      transition: transform .08s ease, opacity .2s ease;
+      user-select:none;
+      -webkit-tap-highlight-color: transparent;
+      position: relative;
+      max-width: 95%;
+      white-space: normal;
+    }
+    button:active{ transform: scale(0.98); }
+
+    .primary{
+      background:#ff4d6d;
+      color:white;
+      font-weight:600;
+    }
+
+    .ghost{
+      background:white;
+      color:#333;
+      border:1px solid rgba(0,0,0,.08);
+    }
+
+    .page{ display:none; }
+    .page.active{ display:block; }
+
+    /* Confetti */
+    .confetti{
+      position: fixed;
+      inset:0;
+      pointer-events:none;
+      overflow:hidden;
+      display:none;
+    }
+    .dot{
+      position:absolute;
+      width:10px;
+      height:10px;
+      border-radius:50%;
+      animation: fall 1.6s linear forwards;
+    }
+    @keyframes fall{
+      from{ transform: translateY(-20px) rotate(0deg); opacity:1; }
+      to{ transform: translateY(110vh) rotate(360deg); opacity:0; }
+    }
+  </style>
+</head>
+
+<body>
+  <div class="confetti" id="confetti"></div>
+
+  <div class="card" id="card">
+    <!-- PAGE 1 -->
+    <div class="page active" id="page1">
+      <h1>Redeem your gift here</h1>
+      <div class="btns">
+        <button class="primary" id="openBtn">Open 🤍</button>
+      </div>
+    </div>
+
+    <!-- PAGE 2 -->
+    <div class="page" id="page2">
+      <h1>Will you be my Valentine?</h1>
+      <div class="btns">
+        <button class="primary" id="yesBtn">Yes 🤍</button>
+        <button class="ghost" id="noBtn">blehhh u cnt click no bish :P</button>
+      </div>
+
+      <div class="subtitle" style="display:none;" id="teaserText">
+        okii see u on 14 feb 🌴⛺️
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // Pages
+    const page1 = document.getElementById("page1");
+    const page2 = document.getElementById("page2");
+    function showPage(page){
+      page1.classList.remove("active");
+      page2.classList.remove("active");
+      page.classList.add("active");
+    }
+
+    // Confetti
+    const confetti = document.getElementById("confetti");
+    function popConfetti(){
+      confetti.style.display = "block";
+      confetti.innerHTML = "";
+      const colors = ["#ff4d6d","#ffd166","#6ee7ff","#a78bfa","#34d399","#fb7185"];
+      for(let i=0;i<120;i++){
+        const d = document.createElement("div");
+        d.className = "dot";
+        d.style.left = Math.random()*100 + "vw";
+        d.style.top = (-20 - Math.random()*100) + "px";
+        d.style.background = colors[Math.floor(Math.random()*colors.length)];
+        d.style.animationDelay = (Math.random()*0.2) + "s";
+        d.style.transform = `scale(${0.6 + Math.random()*1.2})`;
+        confetti.appendChild(d);
+      }
+      setTimeout(()=> confetti.style.display="none", 1800);
+    }
+
+    // Page 1: Open (no dodge)
+    document.getElementById("openBtn").addEventListener("click", () => {
+      showPage(page2);
+    });
+
+    // Page 2: No dodges; Yes shows teaser + confetti
+    const card = document.getElementById("card");
+    const yesBtn = document.getElementById("yesBtn");
+    const noBtn = document.getElementById("noBtn");
+    const teaserText = document.getElementById("teaserText");
+
+    function moveNoButton(){
+      const cardRect = card.getBoundingClientRect();
+      const btnRect = noBtn.getBoundingClientRect();
+      const padding = 16;
+
+      const maxX = Math.max(0, cardRect.width - btnRect.width - padding*2);
+      const maxY = Math.max(0, cardRect.height - btnRect.height - padding*2);
+
+      noBtn.style.position = "absolute";
+      noBtn.style.left = (Math.random()*maxX + padding) + "px";
+      noBtn.style.top  = (Math.random()*maxY + padding) + "px";
+    }
+
+    yesBtn.addEventListener("click", () => {
+      popConfetti();
+      teaserText.style.display = "block";
+      noBtn.style.display = "none";
+    });
+
+    // Desktop + mobile dodge
+    noBtn.addEventListener("mouseenter", moveNoButton);
+    noBtn.addEventListener("touchstart", (e) => { e.preventDefault(); moveNoButton(); });
+  </script>
+</body>
+</html>
